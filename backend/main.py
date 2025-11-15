@@ -1,76 +1,58 @@
 """
-FastAPI backend for Adaptive Hybrid Ranking.
+FastAPI backend for API Recommendation System.
 Implements:
   /health
   /recommend
   /ask
-  /compare
-  /top_apis
-  /logs
   /evaluate
+  /logs
 """
 
 import json
 import os
-import math
 import threading
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 from fastapi import FastAPI, Query, Body, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
-# ---------------------------------------------------------------------
-# Import local modules safely (single, correct block)
-# ---------------------------------------------------------------------
-try:
-    from retriever.semantic_search import semantic_retrieve
-    print("✅ Successfully imported retriever.semantic_search")
-except Exception as e:
-    print(f"⚠️  Failed to import retriever.semantic_search: {e}")
+# ------------------------------------------------------------
+# Backend utilities
+# ------------------------------------------------------------
+from backend.logger import get_logger
+from backend.schemas import (
+    RecommendRequest,
+    AskRequest,
+    EvaluateRequest
+)
+from backend.pipeline import (
+    run_recommend_pipeline,
+    run_ask_pipeline,
+    run_evaluate_pipeline
+)
 
-    def semantic_retrieve(query: str, top_k: int = 10):
-        raise RuntimeError(
-            f"Retriever import failed — error: {str(e)}. "
-            f"Check retriever/semantic_search.py and FAISS/model loading."
-        )
+# ------------------------------------------------------------
+# Initialize logger, app
+# ------------------------------------------------------------
+logger = get_logger()
 
-try:
-    from ranking.dynamic_ranker import score_documents
-    print("✅ Successfully imported ranking.dynamic_ranker")
-except Exception as e:
-    print(f"⚠️  Failed to import ranking.dynamic_ranker: {e}")
+app = FastAPI(
+    title="API Recommendation & Query Assistant",
+    version="1.0"
+)
 
-    def score_documents(*args, **kwargs):
-        raise RuntimeError(f"Ranker import failed: {str(e)}")
-
-try:
-    from rag.composer import explain_top_result
-    print("✅ Successfully imported rag.composer")
-except Exception as e:
-    print(f"⚠️  Failed to import rag.composer: {e}")
-
-    def explain_top_result(*args, **kwargs):
-        return f"Explainability module failed to import: {str(e)}"
-
-# ---------------------------------------------------------------------
-# FastAPI App Configuration
-# ---------------------------------------------------------------------
-app = FastAPI(title="API Recommendation & Query Assistant", version="1.0")
-
-# Allow dashboard frontend access (open CORS policy for dev)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
-# ---------------------------------------------------------------------
-# Thread-safe logging
-# ---------------------------------------------------------------------
+# ------------------------------------------------------------
+# Local log file (thread-safe)
+# ------------------------------------------------------------
 LOG_PATH = os.path.join(os.path.dirname(__file__), "logs.jsonl")
 LOG_LOCK = threading.Lock()
 
@@ -78,9 +60,12 @@ LOG_LOCK = threading.Lock()
 def append_log(entry: Dict[str, Any]):
     entry = dict(entry)
     entry.setdefault("timestamp", datetime.utcnow().isoformat() + "Z")
+
     with LOG_LOCK:
         with open(LOG_PATH, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry) + "\n")
+
+    logger.info(f"Logged event: {entry.get('type', 'unknown')} request_id={entry.get('request_id', '-')}")
 
 
 def read_recent_logs(limit: int = 100) -> List[Dict[str, Any]]:
@@ -89,30 +74,16 @@ def read_recent_logs(limit: int = 100) -> List[Dict[str, Any]]:
     with open(LOG_PATH, "r", encoding="utf-8") as f:
         lines = f.read().splitlines()
     logs = [json.loads(l) for l in lines if l.strip()]
-    return sorted(logs, key=lambda x: x.get("timestamp", ""), reverse=True)[:limit]
-
-# ---------------------------------------------------------------------
-# Pydantic Models
-# ---------------------------------------------------------------------
-class EvaluateRequest(BaseModel):
-    query: str
-    relevant: List[str]
-    k: Optional[int] = 10
+    logs.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+    return logs[:limit]
 
 
-class CompareRequest(BaseModel):
-    api_id_a: str
-    api_id_b: str
-    query: Optional[str] = None
-    intent: Optional[str] = None
-    top_k: Optional[int] = 50
-
-# ---------------------------------------------------------------------
-# Health Check
-# ---------------------------------------------------------------------
+# ------------------------------------------------------------
+# /health
+# ------------------------------------------------------------
 @app.get("/health")
 def health():
-    """Return system health and component status."""
+    """Simple system health endpoint."""
     return {
         "status": "ok",
         "app": "API Recommendation & Query Assistant",
@@ -120,145 +91,117 @@ def health():
         "time": datetime.utcnow().isoformat() + "Z",
         "components": {
             "faiss": "up",
-            "db": "n/a",
             "retriever": "ready",
             "ranker": "ready",
-            "explainability": "ready",
-        },
+            "explainability": "ready"
+        }
     }
 
-# ---------------------------------------------------------------------
-# Recommend Endpoint
-# ---------------------------------------------------------------------
+
+# ------------------------------------------------------------
+# /recommend
+# ------------------------------------------------------------
 @app.get("/recommend")
-def recommend(query: str = Query(...), top_k: int = 10, intent: Optional[str] = None):
-    """Adaptive hybrid ranking."""
-    print(f"\n🟢 [REQUEST] /recommend — query='{query}', top_k={top_k}, intent='{intent}'")
+def recommend(
+    query: str = Query(...),
+    top_k: int = 10,
+    intent: Optional[str] = None,
+    request_id: Optional[str] = None
+):
+    """
+    Thin wrapper — delegates to backend.pipeline.run_recommend_pipeline()
+    """
+    logger.info(
+        f"[REQUEST] /recommend query='{query}' top_k={top_k} intent='{intent}'"
+    )
+
+    req = RecommendRequest(
+        request_id=request_id,
+        query=query,
+        intent=intent,
+        top_k=top_k
+    )
 
     try:
-        metadata, sim_scores = semantic_retrieve(query, top_k=top_k)
-        print(f"✅ [Retriever] Returned {len(metadata)} candidates")
-    except Exception as err:
-        print(f"❌ [Retriever Error] {err}")
-        raise HTTPException(status_code=500, detail=f"Retriever failed: {str(err)}")
-
-    try:
-        results = score_documents(metadata, sim_scores, intent=intent)
-        print("✅ [Ranker] Scoring successful")
-    except Exception as err:
-        print(f"❌ [Ranker Error] {err}")
-        raise HTTPException(status_code=500, detail=f"Ranker failed: {str(err)}")
+        resp = run_recommend_pipeline(req)
+    except Exception as e:
+        logger.error(f"[ERROR] /recommend pipeline failure: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     append_log({
         "type": "recommend",
+        "request_id": resp.request_id,
         "query": query,
         "intent": intent or "none",
-        "top_k": top_k,
+        "top_k": top_k
     })
 
-    return {
-        "query": query,
-        "intent": intent or "recommend",
-        "results": results.get("ranked", []),
-        "weights": results.get("weights", {}),
-    }
+    return JSONResponse(status_code=200, content=resp.dict())
 
-# ---------------------------------------------------------------------
-# Ask Endpoint (Explain Top Result)
-# ---------------------------------------------------------------------
+
+# ------------------------------------------------------------
+# /ask
+# ------------------------------------------------------------
 @app.post("/ask")
-def ask(
-    query: str = Body(..., embed=True),
-    top_k: int = Body(5, embed=True),
-    intent: Optional[str] = Body(None, embed=True),
-):
-    """Explain why the top API was ranked highest."""
-    print(f"\n🟢 [REQUEST] /ask — query='{query}', top_k={top_k}, intent='{intent}'")
+def ask(payload: AskRequest = Body(...)):
+    """
+    Thin wrapper — delegates to backend.pipeline.run_ask_pipeline()
+    """
+    logger.info(
+        f"[REQUEST] /ask query='{payload.query}' top_k={payload.top_k} intent='{payload.intent}'"
+    )
 
     try:
-        metadata, sim_scores = semantic_retrieve(query, top_k=top_k)
-        print(f"✅ [Retriever] Got {len(metadata)} docs")
-    except Exception as err:
-        print(f"❌ [Retriever Error in /ask] {err}")
-        raise HTTPException(status_code=500, detail=f"Retriever failed: {str(err)}")
-
-    try:
-        results = score_documents(metadata, sim_scores, intent=intent)
-        ranked = results.get("ranked", [])
-        top = ranked[0] if ranked else None
-        explanation = explain_top_result(top) if top else "No results to explain."
-        print("✅ [Explainability] Explanation generated successfully")
-    except Exception as err:
-        print(f"❌ [Ranking/Explainability Error] {err}")
-        raise HTTPException(status_code=500, detail=f"Explainability failed: {str(err)}")
+        resp = run_ask_pipeline(payload)
+    except Exception as e:
+        logger.error(f"[ERROR] /ask pipeline failure: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     append_log({
         "type": "ask",
-        "query": query,
-        "intent": intent or "none",
-        "top_result": top,
-        "explanation": explanation,
+        "request_id": resp.request_id,
+        "query": payload.query,
+        "intent": payload.intent or "none",
+        "top_k": payload.top_k
     })
 
-    return {
-        "query": query,
-        "intent": intent or "recommend",
-        "explanation": explanation,
-        "result": top,
-        "components": results.get("weights", {}),
-    }
+    return JSONResponse(status_code=200, content=resp.dict())
 
-# ---------------------------------------------------------------------
-# Evaluate Endpoint
-# ---------------------------------------------------------------------
+
+# ------------------------------------------------------------
+# /evaluate
+# ------------------------------------------------------------
 @app.post("/evaluate")
 def evaluate(payload: EvaluateRequest):
-    """Compute Precision@K, Recall@K, and NDCG@K for a given query."""
-    q = payload.query
-    k = payload.k or 10
-    print(f"\n🟢 [REQUEST] /evaluate — query='{q}', k={k}")
+    """
+    Thin wrapper — delegates to backend.pipeline.run_evaluate_pipeline()
+    """
+    logger.info(
+        f"[REQUEST] /evaluate query='{payload.query}' top_k='{payload.top_k}'"
+    )
 
     try:
-        metadata, sim_scores = semantic_retrieve(q, top_k=max(100, k))
-        results = score_documents(metadata, sim_scores)
-        retrieved_ids = [r["id"] for r in results.get("ranked", [])][:k]
-        print("✅ [Retriever+Ranker] Evaluation data ready")
-    except Exception as err:
-        print(f"❌ [Evaluation Error] {err}")
-        raise HTTPException(status_code=500, detail=f"Evaluation failed: {str(err)}")
-
-    def precision_at_k(retrieved, relevant, k):
-        return sum(1 for r in retrieved[:k] if r in relevant) / k if k > 0 else 0
-
-    def recall_at_k(retrieved, relevant, k):
-        return sum(1 for r in retrieved[:k] if r in relevant) / len(relevant) if relevant else 0
-
-    def dcg_at_k(retrieved, relevant, k):
-        rel = set(relevant)
-        return sum((1.0 if r in rel else 0.0) / math.log2(i + 2) for i, r in enumerate(retrieved[:k]))
-
-    def ndcg_at_k(retrieved, relevant, k):
-        ideal = sum(1.0 / math.log2(i + 2) for i in range(min(k, len(relevant))))
-        return dcg_at_k(retrieved, relevant, k) / ideal if ideal else 0.0
-
-    p = precision_at_k(retrieved_ids, payload.relevant, k)
-    r = recall_at_k(retrieved_ids, payload.relevant, k)
-    ndcg = ndcg_at_k(retrieved_ids, payload.relevant, k)
+        resp = run_evaluate_pipeline(payload)
+    except Exception as e:
+        logger.error(f"[ERROR] /evaluate pipeline failure: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     append_log({
         "type": "evaluate",
-        "query": q,
-        "k": k,
-        "precision": p,
-        "recall": r,
-        "ndcg": ndcg,
+        "request_id": resp.request_id,
+        "query": payload.query,
+        "top_k": payload.top_k
     })
 
-    print(f"📊 [Evaluation Metrics] P@{k}={p:.3f}, R@{k}={r:.3f}, NDCG@{k}={ndcg:.3f}")
+    return JSONResponse(status_code=200, content=resp.dict())
 
-    return {
-        "query": q,
-        "k": k,
-        "metrics": {"precision": p, "recall": r, "ndcg": ndcg},
-        "retrieved_ids": retrieved_ids,
-    }
+
+# ------------------------------------------------------------
+# /logs
+# ------------------------------------------------------------
+@app.get("/logs")
+def logs(limit: int = 100):
+    """Fetch recent backend logs."""
+    logger.info(f"[REQUEST] /logs limit={limit}")
+    logs = read_recent_logs(limit=limit)
+    return {"logs": logs}

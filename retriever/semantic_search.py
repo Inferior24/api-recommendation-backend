@@ -1,105 +1,102 @@
-"""
-retriever/semantic_search.py
----------------------------------
-Semantic retrieval using FAISS + SentenceTransformer embeddings.
-If FAISS or embeddings are missing, a fallback mock retrieval ensures backend uptime.
-"""
-
+import os
 import json
+import threading
+from typing import List, Tuple
 import numpy as np
 import faiss
+import yaml
 from sentence_transformers import SentenceTransformer
-import os
-import random
 
-# ------------------------------------------------------------
-# Configuration
-# ------------------------------------------------------------
-DATA_PATH = "data/api_dataset_cleaned.json"
-EMBED_PATH = "data/api_embeddings.npy"
-INDEX_PATH = "data/faiss_index.bin"
+# ---------------------------------------------------------
+# Absolute project root resolution
+# ---------------------------------------------------------
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+_CFG_PATH = os.path.join(_PROJECT_ROOT, "backend", "config.yaml")
 
-# ------------------------------------------------------------
-# Load model once (failsafe)
-# ------------------------------------------------------------
-try:
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-except Exception as e:
-    raise RuntimeError(f"Failed to load embedding model: {e}")
+with open(_CFG_PATH, "r", encoding="utf-8") as f:
+    cfg = yaml.safe_load(f)
 
-# ------------------------------------------------------------
-# Safe data loaders
-# ------------------------------------------------------------
-def _load_json_safe(path: str):
+# Paths (absolute)
+EMBEDDINGS_NPY = os.path.join(_PROJECT_ROOT, cfg["data"]["embeddings_npy"])
+METADATA_JSON = os.path.join(_PROJECT_ROOT, cfg["data"]["metadata_json"])
+FAISS_INDEX_PATH = os.path.join(_PROJECT_ROOT, cfg["data"]["faiss_index"])
+
+MODEL_NAME = cfg["model"]["sentence_transformer"]
+TOP_K_DEFAULT = cfg["retriever"]["top_k_default"]
+
+_lock = threading.Lock()
+_index = None
+_metadata = None
+_model = None
+
+
+def _load_index():
+    global _index, _metadata, _model
+    with _lock:
+        if _index is not None:
+            return
+
+        # Load metadata
+        if not os.path.exists(METADATA_JSON):
+            raise FileNotFoundError(f"Metadata missing: {METADATA_JSON}")
+        with open(METADATA_JSON, "r", encoding="utf-8") as f:
+            _metadata = json.load(f)
+
+        # Load FAISS index
+        if not os.path.exists(FAISS_INDEX_PATH):
+            raise FileNotFoundError(f"FAISS index missing: {FAISS_INDEX_PATH}")
+        _index = faiss.read_index(FAISS_INDEX_PATH)
+
+        # Load SentenceTransformer model
+        _model = SentenceTransformer(MODEL_NAME)
+
+
+def _standardize_metadata(m: dict, idx: int) -> dict:
+    out = dict(m)
+    out.setdefault("id", out.get("id") or f"doc_{idx}")
+
+    # doc_quality
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        raise RuntimeError(f"Failed to load JSON data from '{path}': {e}")
+        out["doc_quality"] = float(out.get("doc_quality", 0))
+    except:
+        out["doc_quality"] = 0.0
 
-
-def _load_numpy_safe(path: str):
+    # popularity
     try:
-        return np.load(path)
-    except Exception as e:
-        raise RuntimeError(f"Failed to load embeddings from '{path}': {e}")
+        out["popularity"] = float(out.get("popularity", 0))
+    except:
+        out["popularity"] = 0.0
+
+    out.setdefault("last_updated", out.get("last_updated", ""))
+    out.setdefault("cleaned_text", out.get("cleaned_text") or out.get("description", "")[:512])
+
+    return out
 
 
-def _load_faiss_safe(path: str):
-    try:
-        return faiss.read_index(path)
-    except Exception as e:
-        raise RuntimeError(f"Failed to load FAISS index from '{path}': {e}")
+def semantic_retrieve(query: str, top_k: int = None) -> Tuple[List[dict], List[float]]:
+    if top_k is None:
+        top_k = TOP_K_DEFAULT
 
+    _load_index()
 
-# ------------------------------------------------------------
-# Attempt to load resources
-# ------------------------------------------------------------
-api_data, embeddings, index = None, None, None
-try:
-    if os.path.exists(DATA_PATH):
-        api_data = _load_json_safe(DATA_PATH)
-    if os.path.exists(EMBED_PATH):
-        embeddings = _load_numpy_safe(EMBED_PATH)
-    if os.path.exists(INDEX_PATH):
-        index = _load_faiss_safe(INDEX_PATH)
-except Exception as e:
-    print(f"[WARN] Semantic search fallback mode: {e}")
+    if not query:
+        return [], []
 
+    # Encode
+    q_emb = _model.encode([query], convert_to_numpy=True).astype("float32")
 
-# ------------------------------------------------------------
-# Retrieval core
-# ------------------------------------------------------------
-def semantic_retrieve(query: str, top_k: int = 10):
-    """
-    Retrieve top_k APIs semantically.  
-    Returns metadata and similarity scores (0–1).
-    Uses fallback if FAISS or embeddings are unavailable.
-    """
-    try:
-        if not query or not isinstance(query, str):
-            raise ValueError("Query must be a non-empty string.")
+    # Normalize vector
+    faiss.normalize_L2(q_emb)
 
-        # --- Fallback Mode ---
-        if api_data is None or embeddings is None or index is None:
-            print("[WARN] FAISS or embeddings missing. Using mock retrieval.")
-            fake_results = random.sample(range(1, 15), min(top_k, 10))
-            metadata = [{"id": f"mock_{i}", "name": f"MockAPI-{i}", "description": "Mock API data"} for i in fake_results]
-            similarities = [round(random.uniform(0.6, 0.95), 3) for _ in metadata]
-            return metadata, similarities
+    # Search
+    D, I = _index.search(q_emb, top_k)
 
-        # --- Normal Mode ---
-        query_vector = model.encode([query])
-        distances, indices = index.search(np.array(query_vector, dtype=np.float32), top_k)
-        similarities = 1 - distances[0]
-        similarities = np.clip(similarities, 0.0, 1.0).tolist()
+    ids = I[0].tolist()
+    sim_scores = [float(max(0, min(1, s))) for s in D[0].tolist()]
 
-        metadata = [api_data[idx] for idx in indices[0]]
-        return metadata, similarities
+    metadata_list = []
+    for idx in ids:
+        if 0 <= idx < len(_metadata):
+            metadata_list.append(_standardize_metadata(_metadata[idx], idx))
 
-    except Exception as e:
-        raise RuntimeError(f"Semantic retrieval failed for '{query}': {e}")
-
-
-if __name__ == "__main__":
-    print("✅ Semantic Retriever module functional.")
+    return metadata_list, sim_scores[:len(metadata_list)]

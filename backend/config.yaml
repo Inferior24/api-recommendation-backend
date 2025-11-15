@@ -1,0 +1,13 @@
+data:
+  normalized_dataset: data/api_dataset_normalized.json
+  embeddings_npy: data/api_embeddings.npy
+  metadata_json: data/api_metadata.json
+  faiss_index: data/faiss_index.bin
+
+model:
+  sentence_transformer: all-mpnet-base-v2
+  embedding_dim: 768
+
+retriever:
+  top_k_default: 10
+  use_gpu: false
