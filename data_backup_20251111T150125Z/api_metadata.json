@@ -1,0 +1,755 @@
+[
+    {
+        "api_name": "OpenAI GPT API",
+        "description": "Advanced language model API for text generation and analysis.",
+        "endpoints": [
+            "/completions",
+            "/edits",
+            "/embeddings",
+            "/models",
+            "/moderations"
+        ],
+        "documentation_url": "https://platform.openai.com/docs/api-reference",
+        "version": "2.1",
+        "popularity_score": 0.98,
+        "last_updated": "2025-09-15 00:00:00",
+        "doc_quality": 0.95,
+        "cleaned_text": "advanced language model api text generation analysis completion edit embedding model moderation"
+    },
+    {
+        "api_name": "Stripe Payments API",
+        "description": "Comprehensive payment processing and financial operations platform.",
+        "endpoints": [
+            "/charges",
+            "/customers",
+            "/payments",
+            "/refunds"
+        ],
+        "documentation_url": "https://stripe.com/docs/api",
+        "version": "3.0",
+        "popularity_score": 0.96,
+        "last_updated": "2025-08-20 00:00:00",
+        "doc_quality": 0.93,
+        "cleaned_text": "comprehensive payment process financial operation platform charge customer payment refund"
+    },
+    {
+        "api_name": "AccuWeather API",
+        "description": "Global weather forecasting and current conditions data provider.",
+        "endpoints": [
+            "/forecasts/daily",
+            "/current-conditions",
+            "/locations",
+            "/alerts"
+        ],
+        "documentation_url": "https://developer.accuweather.com/apis",
+        "version": "2.5",
+        "popularity_score": 0.89,
+        "last_updated": "2025-07-12 00:00:00",
+        "doc_quality": 0.88,
+        "cleaned_text": "global weather forecast current condition datum provider forecast daily current condition location alert"
+    },
+    {
+        "api_name": "Twitter V2 API",
+        "description": "Platform for accessing and managing Twitter social media data.",
+        "endpoints": [
+            "/tweets",
+            "/users",
+            "/streams",
+            "/trends"
+        ],
+        "documentation_url": "https://developer.twitter.com/en/docs/twitter-api",
+        "version": "2.0",
+        "popularity_score": 0.92,
+        "last_updated": "2025-06-30 00:00:00",
+        "doc_quality": 0.9,
+        "cleaned_text": "platform access manage twitter social media datum tweet user stream trend"
+    },
+    {
+        "api_name": "HealthConnect API",
+        "description": "Secure healthcare data exchange and patient records management.",
+        "endpoints": [
+            "/patients",
+            "/records",
+            "/appointments",
+            "/prescriptions"
+        ],
+        "documentation_url": "https://healthconnect.com/api-docs",
+        "version": "1.5",
+        "popularity_score": 0.85,
+        "last_updated": "2025-05-18 00:00:00",
+        "doc_quality": 0.82,
+        "cleaned_text": "secure healthcare datum exchange patient record management patient record appointment prescription"
+    },
+    {
+        "api_name": "Uber Rides API",
+        "description": "Ride-hailing and transportation service integration platform.",
+        "endpoints": [
+            "/rides",
+            "/estimates",
+            "/products",
+            "/drivers"
+        ],
+        "documentation_url": "https://developer.uber.com/docs",
+        "version": "2.2",
+        "popularity_score": 0.88,
+        "last_updated": "2025-08-05 00:00:00",
+        "doc_quality": 0.86,
+        "cleaned_text": "ride hail transportation service integration platform rid estimate product driver"
+    },
+    {
+        "api_name": "Coursera API",
+        "description": "Access to online course content and learning management features.",
+        "endpoints": [
+            "/courses",
+            "/enrollments",
+            "/grades",
+            "/certificates"
+        ],
+        "documentation_url": "https://building.coursera.org/app-platform/catalog",
+        "version": "1.8",
+        "popularity_score": 0.82,
+        "last_updated": "2025-04-22 00:00:00",
+        "doc_quality": 0.85,
+        "cleaned_text": "access online course content learn management feature course enrollment grade certificate"
+    },
+    {
+        "api_name": "AWS S3 API",
+        "description": "Cloud storage and object management service interface.",
+        "endpoints": [
+            "/objects",
+            "/buckets",
+            "/presigned-urls",
+            "/lifecycles"
+        ],
+        "documentation_url": "https://docs.aws.amazon.com/AmazonS3/latest/API/",
+        "version": "3.0",
+        "popularity_score": 0.95,
+        "last_updated": "2025-09-01 00:00:00",
+        "doc_quality": 0.92,
+        "cleaned_text": "cloud storage object management service interface object bucket presigne url lifecycle"
+    },
+    {
+        "api_name": "Shopify API",
+        "description": "E-commerce platform for online store management and operations.",
+        "endpoints": [
+            "/products",
+            "/orders",
+            "/customers",
+            "/inventory"
+        ],
+        "documentation_url": "https://shopify.dev/api",
+        "version": "2.8",
+        "popularity_score": 0.91,
+        "last_updated": "2025-07-28 00:00:00",
+        "doc_quality": 0.89,
+        "cleaned_text": "commerce platform online store management operation product order customer inventory"
+    },
+    {
+        "api_name": "NewsAPI",
+        "description": "Real-time news articles and headlines aggregation service.",
+        "endpoints": [
+            "/headlines",
+            "/sources",
+            "/search",
+            "/categories"
+        ],
+        "documentation_url": "https://newsapi.org/docs",
+        "version": "2.0",
+        "popularity_score": 0.86,
+        "last_updated": "2025-06-15 00:00:00",
+        "doc_quality": 0.84,
+        "cleaned_text": "real time news article headline aggregation service headline source search category"
+    },
+    {
+        "api_name": "HuggingFace API",
+        "description": "Machine learning model hosting and inference service.",
+        "endpoints": [
+            "/inference",
+            "/models",
+            "/datasets",
+            "/train"
+        ],
+        "documentation_url": "https://huggingface.co/docs/api-inference",
+        "version": "1.7",
+        "popularity_score": 0.87,
+        "last_updated": "2025-08-10 00:00:00",
+        "doc_quality": 0.88,
+        "cleaned_text": "machine learning model host inference service inference model dataset train"
+    },
+    {
+        "api_name": "Plaid API",
+        "description": "Banking data aggregation and financial account linking.",
+        "endpoints": [
+            "/accounts",
+            "/transactions",
+            "/auth",
+            "/balance"
+        ],
+        "documentation_url": "https://plaid.com/docs/api/",
+        "version": "2.5",
+        "popularity_score": 0.89,
+        "last_updated": "2025-05-25 00:00:00",
+        "doc_quality": 0.91,
+        "cleaned_text": "banking datum aggregation financial account link account transaction auth balance"
+    },
+    {
+        "api_name": "Dark Sky API",
+        "description": "Hyperlocal weather forecasting and precipitation data.",
+        "endpoints": [
+            "/forecast",
+            "/timemachine",
+            "/alerts",
+            "/maps"
+        ],
+        "documentation_url": "https://darksky.net/dev/docs",
+        "version": "3.0",
+        "popularity_score": 0.84,
+        "last_updated": "2025-03-12 00:00:00",
+        "doc_quality": 0.86,
+        "cleaned_text": "hyperlocal weather forecasting precipitation datum forecast timemachine alert map"
+    },
+    {
+        "api_name": "LinkedIn API",
+        "description": "Professional networking and career development platform.",
+        "endpoints": [
+            "/profile",
+            "/jobs",
+            "/companies",
+            "/share"
+        ],
+        "documentation_url": "https://developer.linkedin.com/docs",
+        "version": "2.2",
+        "popularity_score": 0.88,
+        "last_updated": "2025-07-08 00:00:00",
+        "doc_quality": 0.85,
+        "cleaned_text": "professional network career development platform profile job company share"
+    },
+    {
+        "api_name": "Epic Health API",
+        "description": "Electronic health records and medical data integration.",
+        "endpoints": [
+            "/ehr",
+            "/clinical",
+            "/billing",
+            "/scheduling"
+        ],
+        "documentation_url": "https://open.epic.com/api/documentation",
+        "version": "2.0",
+        "popularity_score": 0.83,
+        "last_updated": "2025-04-30 00:00:00",
+        "doc_quality": 0.87,
+        "cleaned_text": "electronic health record medical datum integration ehr clinical billing scheduling"
+    },
+    {
+        "api_name": "Lyft API",
+        "description": "Ride-sharing and transportation service platform.",
+        "endpoints": [
+            "/rides",
+            "/cost",
+            "/eta",
+            "/drivers"
+        ],
+        "documentation_url": "https://developer.lyft.com/docs",
+        "version": "1.9",
+        "popularity_score": 0.82,
+        "last_updated": "2025-06-20 00:00:00",
+        "doc_quality": 0.83,
+        "cleaned_text": "ride share transportation service platform ride cost eta driver"
+    },
+    {
+        "api_name": "Khan Academy API",
+        "description": "Educational content and learning progress tracking.",
+        "endpoints": [
+            "/videos",
+            "/exercises",
+            "/progress",
+            "/badges"
+        ],
+        "documentation_url": "https://khan.github.io/api-docs",
+        "version": "2.1",
+        "popularity_score": 0.79,
+        "last_updated": "2025-02-15 00:00:00",
+        "doc_quality": 0.81,
+        "cleaned_text": "educational content learn progress track video exercise progress badge"
+    },
+    {
+        "api_name": "Google Cloud Storage API",
+        "description": "Cloud object storage and data management service.",
+        "endpoints": [
+            "/buckets",
+            "/objects",
+            "/upload",
+            "/iam"
+        ],
+        "documentation_url": "https://cloud.google.com/storage/docs/json_api",
+        "version": "2.8",
+        "popularity_score": 0.93,
+        "last_updated": "2025-09-05 00:00:00",
+        "doc_quality": 0.94,
+        "cleaned_text": "cloud object storage datum management service bucket object upload iam"
+    },
+    {
+        "api_name": "Amazon Product API",
+        "description": "E-commerce product data and catalog management.",
+        "endpoints": [
+            "/products",
+            "/reviews",
+            "/prices",
+            "/categories"
+        ],
+        "documentation_url": "https://webservices.amazon.com/paapi5",
+        "version": "2.4",
+        "popularity_score": 0.9,
+        "last_updated": "2025-08-15 00:00:00",
+        "doc_quality": 0.88,
+        "cleaned_text": "commerce product datum catalog management product review price category"
+    },
+    {
+        "api_name": "Associated Press API",
+        "description": "News content distribution and media asset management.",
+        "endpoints": [
+            "/articles",
+            "/images",
+            "/videos",
+            "/topics"
+        ],
+        "documentation_url": "https://developer.ap.org/api-reference",
+        "version": "1.5",
+        "popularity_score": 0.81,
+        "last_updated": "2025-05-10 00:00:00",
+        "doc_quality": 0.79,
+        "cleaned_text": "news content distribution medium asset management article image video topic"
+    },
+    {
+        "api_name": "Claude API",
+        "description": "Advanced AI language model for text analysis and generation.",
+        "endpoints": [
+            "/complete",
+            "/analyze",
+            "/classify",
+            "/summarize"
+        ],
+        "documentation_url": "https://claude.ai/docs",
+        "version": "1.2",
+        "popularity_score": 0.86,
+        "last_updated": "2025-07-20 00:00:00",
+        "doc_quality": 0.89,
+        "cleaned_text": "advanced language model text analysis generation complete analyze classify summarize"
+    },
+    {
+        "api_name": "Square API",
+        "description": "Payment processing and merchant services platform.",
+        "endpoints": [
+            "/payments",
+            "/refunds",
+            "/orders",
+            "/catalog"
+        ],
+        "documentation_url": "https://developer.squareup.com/reference",
+        "version": "2.6",
+        "popularity_score": 0.87,
+        "last_updated": "2025-06-08 00:00:00",
+        "doc_quality": 0.9,
+        "cleaned_text": "payment processing merchant service platform payment refund order catalog"
+    },
+    {
+        "api_name": "OpenWeather API",
+        "description": "Global weather data and forecasting service.",
+        "endpoints": [
+            "/weather",
+            "/forecast",
+            "/air-quality",
+            "/maps"
+        ],
+        "documentation_url": "https://openweathermap.org/api",
+        "version": "3.0",
+        "popularity_score": 0.85,
+        "last_updated": "2025-04-15 00:00:00",
+        "doc_quality": 0.87,
+        "cleaned_text": "global weather datum forecasting service weather forecast air quality map"
+    },
+    {
+        "api_name": "Instagram Graph API",
+        "description": "Social media content and engagement management.",
+        "endpoints": [
+            "/media",
+            "/insights",
+            "/comments",
+            "/hashtags"
+        ],
+        "documentation_url": "https://developers.facebook.com/docs/instagram-api",
+        "version": "2.3",
+        "popularity_score": 0.89,
+        "last_updated": "2025-08-25 00:00:00",
+        "doc_quality": 0.86,
+        "cleaned_text": "social medium content engagement management media insight comment hashtag"
+    },
+    {
+        "api_name": "CareCloud API",
+        "description": "Healthcare practice management and patient engagement.",
+        "endpoints": [
+            "/appointments",
+            "/patients",
+            "/billing",
+            "/reports"
+        ],
+        "documentation_url": "https://carecloud.com/developer",
+        "version": "1.8",
+        "popularity_score": 0.78,
+        "last_updated": "2025-03-05 00:00:00",
+        "doc_quality": 0.82,
+        "cleaned_text": "healthcare practice management patient engagement appointment patient billing report"
+    },
+    {
+        "api_name": "Transit API",
+        "description": "Public transportation schedules and real-time updates.",
+        "endpoints": [
+            "/routes",
+            "/stops",
+            "/vehicles",
+            "/alerts"
+        ],
+        "documentation_url": "https://transitapi.com/documentation",
+        "version": "2.0",
+        "popularity_score": 0.81,
+        "last_updated": "2025-05-30 00:00:00",
+        "doc_quality": 0.84,
+        "cleaned_text": "public transportation schedule real time update route stop vehicle alert"
+    },
+    {
+        "api_name": "Udemy API",
+        "description": "Online learning platform content and course management.",
+        "endpoints": [
+            "/courses",
+            "/instructors",
+            "/reviews",
+            "/enrollment"
+        ],
+        "documentation_url": "https://www.udemy.com/developers/api",
+        "version": "2.2",
+        "popularity_score": 0.8,
+        "last_updated": "2025-04-08 00:00:00",
+        "doc_quality": 0.83,
+        "cleaned_text": "online learn platform content course management course instructor review enrollment"
+    },
+    {
+        "api_name": "Azure Blob Storage API",
+        "description": "Cloud-based object storage service.",
+        "endpoints": [
+            "/containers",
+            "/blobs",
+            "/snapshots",
+            "/metadata"
+        ],
+        "documentation_url": "https://docs.microsoft.com/azure/storage/blobs",
+        "version": "2.9",
+        "popularity_score": 0.91,
+        "last_updated": "2025-09-10 00:00:00",
+        "doc_quality": 0.93,
+        "cleaned_text": "cloud base object storage service container blob snapshots metadata"
+    },
+    {
+        "api_name": "WooCommerce API",
+        "description": "E-commerce platform for WordPress websites.",
+        "endpoints": [
+            "/products",
+            "/orders",
+            "/customers",
+            "/coupons"
+        ],
+        "documentation_url": "https://woocommerce.github.io/woocommerce-rest-api-docs",
+        "version": "3.5",
+        "popularity_score": 0.84,
+        "last_updated": "2025-07-15 00:00:00",
+        "doc_quality": 0.85,
+        "cleaned_text": "commerce platform wordpress website product order customer coupon"
+    },
+    {
+        "api_name": "Reuters API",
+        "description": "Global news and financial market data service.",
+        "endpoints": [
+            "/news",
+            "/markets",
+            "/analysis",
+            "/feeds"
+        ],
+        "documentation_url": "https://reuters.com/api/docs",
+        "version": "1.6",
+        "popularity_score": 0.83,
+        "last_updated": "2025-06-25 00:00:00",
+        "doc_quality": 0.81,
+        "cleaned_text": "global news financial market datum service news market analysis feed"
+    },
+    {
+        "api_name": "Google Vision API",
+        "description": "Image analysis and recognition service.",
+        "endpoints": [
+            "/detect",
+            "/annotate",
+            "/ocr",
+            "/labels"
+        ],
+        "documentation_url": "https://cloud.google.com/vision/docs",
+        "version": "2.4",
+        "popularity_score": 0.92,
+        "last_updated": "2025-08-30 00:00:00",
+        "doc_quality": 0.91,
+        "cleaned_text": "image analysis recognition service detect annotate ocr label"
+    },
+    {
+        "api_name": "PayPal API",
+        "description": "Online payment processing and financial transactions.",
+        "endpoints": [
+            "/payments",
+            "/payouts",
+            "/billing",
+            "/subscriptions"
+        ],
+        "documentation_url": "https://developer.paypal.com/docs",
+        "version": "2.7",
+        "popularity_score": 0.94,
+        "last_updated": "2025-07-25 00:00:00",
+        "doc_quality": 0.92,
+        "cleaned_text": "online payment process financial transaction payment payout billing subscription"
+    },
+    {
+        "api_name": "WeatherBit API",
+        "description": "Weather forecasting and historical climate data.",
+        "endpoints": [
+            "/current",
+            "/forecast",
+            "/history",
+            "/severe"
+        ],
+        "documentation_url": "https://www.weatherbit.io/api",
+        "version": "2.1",
+        "popularity_score": 0.77,
+        "last_updated": "2025-02-28 00:00:00",
+        "doc_quality": 0.8,
+        "cleaned_text": "weather forecasting historical climate datum current forecast history severe"
+    },
+    {
+        "api_name": "Discord API",
+        "description": "Gaming-focused social communication platform.",
+        "endpoints": [
+            "/channels",
+            "/messages",
+            "/guilds",
+            "/webhooks"
+        ],
+        "documentation_url": "https://discord.com/developers/docs",
+        "version": "2.5",
+        "popularity_score": 0.88,
+        "last_updated": "2025-09-20 00:00:00",
+        "doc_quality": 0.87,
+        "cleaned_text": "gaming focus social communication platform channel message guild webhook"
+    },
+    {
+        "api_name": "DrChrono API",
+        "description": "Medical practice management and telehealth platform.",
+        "endpoints": [
+            "/patients",
+            "/appointments",
+            "/clinical",
+            "/billing"
+        ],
+        "documentation_url": "https://drchrono.com/api-docs",
+        "version": "1.4",
+        "popularity_score": 0.76,
+        "last_updated": "2025-01-15 00:00:00",
+        "doc_quality": 0.78,
+        "cleaned_text": "medical practice management telehealth platform patient appointment clinical billing"
+    },
+    {
+        "api_name": "Citymapper API",
+        "description": "Urban mobility and transit routing service.",
+        "endpoints": [
+            "/routes",
+            "/realtime",
+            "/stations",
+            "/disruptions"
+        ],
+        "documentation_url": "https://citymapper.com/api",
+        "version": "1.8",
+        "popularity_score": 0.79,
+        "last_updated": "2025-04-25 00:00:00",
+        "doc_quality": 0.82,
+        "cleaned_text": "urban mobility transit rout service route realtime station disruption"
+    },
+    {
+        "api_name": "Blackboard API",
+        "description": "Learning management system for educational institutions.",
+        "endpoints": [
+            "/courses",
+            "/users",
+            "/grades",
+            "/content"
+        ],
+        "documentation_url": "https://developer.blackboard.com/portal/docs",
+        "version": "2.3",
+        "popularity_score": 0.81,
+        "last_updated": "2025-03-20 00:00:00",
+        "doc_quality": 0.84,
+        "cleaned_text": "learn management system educational institution course user grade content"
+    },
+    {
+        "api_name": "DigitalOcean API",
+        "description": "Cloud infrastructure and hosting service platform.",
+        "endpoints": [
+            "/droplets",
+            "/volumes",
+            "/networks",
+            "/kubernetes"
+        ],
+        "documentation_url": "https://developers.digitalocean.com/documentation",
+        "version": "2.8",
+        "popularity_score": 0.85,
+        "last_updated": "2025-08-12 00:00:00",
+        "doc_quality": 0.88,
+        "cleaned_text": "cloud infrastructure host service platform droplet volume network kubernete"
+    },
+    {
+        "api_name": "Etsy API",
+        "description": "Handmade and vintage marketplace platform.",
+        "endpoints": [
+            "/listings",
+            "/shops",
+            "/transactions",
+            "/reviews"
+        ],
+        "documentation_url": "https://developers.etsy.com/documentation",
+        "version": "3.2",
+        "popularity_score": 0.82,
+        "last_updated": "2025-06-05 00:00:00",
+        "doc_quality": 0.85,
+        "cleaned_text": "handmade vintage marketplace platform listing shop transaction review"
+    },
+    {
+        "api_name": "Bloomberg API",
+        "description": "Financial market data and news service.",
+        "endpoints": [
+            "/market-data",
+            "/news",
+            "/analytics",
+            "/reference"
+        ],
+        "documentation_url": "https://bloomberg.com/professional/api",
+        "version": "3.0",
+        "popularity_score": 0.93,
+        "last_updated": "2025-09-08 00:00:00",
+        "doc_quality": 0.9,
+        "cleaned_text": "financial market datum news service market datum news analytic reference"
+    },
+    {
+        "api_name": "Stable Diffusion API",
+        "description": "AI-powered image generation and manipulation service.",
+        "endpoints": [
+            "/generate",
+            "/edit",
+            "/variations",
+            "/styles"
+        ],
+        "documentation_url": "https://stability.ai/api-docs",
+        "version": "1.5",
+        "popularity_score": 0.88,
+        "last_updated": "2025-07-30 00:00:00",
+        "doc_quality": 0.86,
+        "cleaned_text": "power image generation manipulation service generate edit variation style"
+    },
+    {
+        "api_name": "Wise API",
+        "description": "International money transfer and multi-currency accounts.",
+        "endpoints": [
+            "/transfers",
+            "/rates",
+            "/accounts",
+            "/statements"
+        ],
+        "documentation_url": "https://wise.com/api-docs",
+        "version": "2.2",
+        "popularity_score": 0.85,
+        "last_updated": "2025-05-15 00:00:00",
+        "doc_quality": 0.87,
+        "cleaned_text": "international money transfer multi currency account transfer rate account statement"
+    },
+    {
+        "api_name": "Ambient Weather API",
+        "description": "Personal weather station data and monitoring.",
+        "endpoints": [
+            "/devices",
+            "/data",
+            "/alerts",
+            "/forecasts"
+        ],
+        "documentation_url": "https://ambientweather.net/api",
+        "version": "1.7",
+        "popularity_score": 0.75,
+        "last_updated": "2025-02-10 00:00:00",
+        "doc_quality": 0.78,
+        "cleaned_text": "personal weather station datum monitoring device datum alert forecast"
+    },
+    {
+        "api_name": "Mastodon API",
+        "description": "Decentralized social media platform integration.",
+        "endpoints": [
+            "/statuses",
+            "/accounts",
+            "/timelines",
+            "/media"
+        ],
+        "documentation_url": "https://docs.joinmastodon.org/api",
+        "version": "2.0",
+        "popularity_score": 0.8,
+        "last_updated": "2025-08-18 00:00:00",
+        "doc_quality": 0.83,
+        "cleaned_text": "decentralize social medium platform integration status account timeline medium"
+    },
+    {
+        "api_name": "Practice Fusion API",
+        "description": "Electronic health records for medical practices.",
+        "endpoints": [
+            "/charts",
+            "/prescriptions",
+            "/labs",
+            "/encounters"
+        ],
+        "documentation_url": "https://practicefusion.com/api-documentation",
+        "version": "1.6",
+        "popularity_score": 0.77,
+        "last_updated": "2025-03-25 00:00:00",
+        "doc_quality": 0.8,
+        "cleaned_text": "electronic health record medical practice chart prescription lab encounter"
+    },
+    {
+        "api_name": "FlightAware API",
+        "description": "Real-time flight tracking and aviation data.",
+        "endpoints": [
+            "/flights",
+            "/airports",
+            "/routes",
+            "/alerts"
+        ],
+        "documentation_url": "https://flightaware.com/api/docs",
+        "version": "2.4",
+        "popularity_score": 0.83,
+        "last_updated": "2025-06-12 00:00:00",
+        "doc_quality": 0.85,
+        "cleaned_text": "real time flight tracking aviation datum flight airport route alert"
+    },
+    {
+        "api_name": "Duolingo API",
+        "description": "Language learning progress and content access.",
+        "endpoints": [
+            "/users",
+            "/lessons",
+            "/progress",
+            "/skills"
+        ],
+        "documentation_url": "https://duolingo.com/api-docs",
+        "version": "1.9",
+        "popularity_score": 0.84,
+        "last_updated": "2025-04-05 00:00:00",
+        "doc_quality": 0.82,
+        "cleaned_text": "language learn progress content access user lesson progress skill"
+    }
+]

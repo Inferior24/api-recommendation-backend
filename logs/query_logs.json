@@ -1,0 +1,17 @@
+[
+  {
+    "timestamp": "2025-11-10 11:34:36",
+    "query": "manual test query",
+    "response_time": 0.5,
+    "results": [
+      {
+        "api_name": "Test API",
+        "hybrid_score": 0.8,
+        "similarity": 0.7,
+        "recency": 0.9,
+        "doc_quality": 0.9,
+        "popularity": 0.8
+      }
+    ]
+  }
+]
